@@ -4,23 +4,34 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import cors from 'cors';
 
+// NEW: Import security and logging packages
+import helmet from 'helmet';
+import morgan from 'morgan';
+
 import connectDB from './config/db.js';
 import postRoutes from './routes/posts.js';
 import categoryRoutes from './routes/categories.js';
 import authRoutes from './routes/auth.js'; 
 import comments from './models/Comment.js';
 
-// 🛑 REMOVE: import uploadRoutes from './routes/uploadRoutes.js';
-
 // --- ESM Setup ---
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 // --- END ESM Setup ---
 
-dotenv.config({ path: './config/config.env' });
+dotenv.config();
 connectDB();
 
 const app = express();
+
+// NEW: Security Headers
+// We use 'cross-origin' policy so your frontend can load images from this backend
+app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
+
+// NEW: Logging
+// 'dev' gives concise color-coded logs. 'combined' is better for true production logs.
+app.use(morgan('dev'));
+
 app.use(cors()); // Use CORS for all requests
 
 // Serve static files from 'uploads'
@@ -35,8 +46,6 @@ app.use('/api/posts', postRoutes);
 // These routes DO need to parse JSON
 app.use('/api/categories', express.json(), categoryRoutes);
 app.use('/api/auth', express.json(), authRoutes);
-
-// 🛑 REMOVE: app.use('/api/upload', uploadRoutes); 
 
 // Simple message to confirm the API is running
 app.get('/', (req, res) => {
