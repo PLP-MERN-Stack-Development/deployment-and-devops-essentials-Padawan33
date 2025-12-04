@@ -1,71 +1,92 @@
 import React, { useState, useEffect } from 'react';
-// 1. Remove axios import
-// import axios from 'axios'; 
-
-// 2. Import the service we fixed in Step 1
 import { postService } from '../services/api'; 
 
 const CATEGORY_PLACEHOLDER = 'Uncategorized'; 
 
-const PostCard = ({ post }) => (
-  <div className="bg-white shadow-lg rounded-xl overflow-hidden transform transition duration-300 hover:shadow-xl hover:scale-[1.02]">
-    <div className="p-6">
-      <div className="flex items-center justify-between mb-4">
-        <span className="bg-indigo-100 text-indigo-800 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">
-          {post.category || CATEGORY_PLACEHOLDER} 
-        </span>
-        <span className="text-sm text-gray-500">
-          {new Date(post.createdAt || Date.now()).toLocaleDateString()}
-        </span>
-      </div>
+// 1. Define the Backend URL specifically for images
+// We need this because images live on the server, not the frontend
+const API_BASE_URL = 'https://deployment-and-devops-essentials-hcoh.onrender.com';
+
+const PostCard = ({ post }) => {
+  // 2. Construct the full image URL
+  // If the post has an image, combine the Backend URL with the image path
+  const imageUrl = post.image 
+    ? `${API_BASE_URL}${post.image.startsWith('/') ? '' : '/'}${post.image.replace('public/', '')}`
+    : null;
+
+  return (
+    <div className="bg-white shadow-lg rounded-xl overflow-hidden transform transition duration-300 hover:shadow-xl hover:scale-[1.02]">
       
-      <h2 className="text-2xl font-bold text-gray-900 mb-3 leading-snug">
-        {post.title}
-      </h2>
-      
-      <p className="text-gray-700 mb-4 line-clamp-3">
-        {post.content}
-      </p>
-      
-      <div className="flex items-center justify-between border-t pt-4">
-        <div className="text-sm text-gray-600 font-medium">
-          Author: {post.author?.username || post.author || 'Anonymous'} 
+      {/* 3. Display the Image (Only if it exists) */}
+      {imageUrl && (
+        <div className="h-48 w-full overflow-hidden bg-gray-200">
+          <img 
+            src={imageUrl} 
+            alt={post.title} 
+            className="w-full h-full object-cover"
+            onError={(e) => { 
+              // If image fails to load, hide the broken icon
+              e.target.style.display = 'none'; 
+            }} 
+          />
         </div>
-        <button 
-          onClick={() => console.log(`Reading post: ${post.title}`)} 
-          className="text-indigo-600 hover:text-indigo-800 transition duration-150 text-sm font-semibold"
-        >
-          Read More &rarr;
-        </button>
+      )}
+
+      <div className="p-6">
+        <div className="flex items-center justify-between mb-4">
+          <span className="bg-indigo-100 text-indigo-800 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">
+            {/* Handle both populated category objects or simple strings */}
+            {post.category?.name || post.category || CATEGORY_PLACEHOLDER} 
+          </span>
+          <span className="text-sm text-gray-500">
+            {new Date(post.createdAt || Date.now()).toLocaleDateString()}
+          </span>
+        </div>
+        
+        <h2 className="text-2xl font-bold text-gray-900 mb-3 leading-snug">
+          {post.title}
+        </h2>
+        
+        <p className="text-gray-700 mb-4 line-clamp-3">
+          {post.content}
+        </p>
+        
+        <div className="flex items-center justify-between border-t pt-4">
+          <div className="text-sm text-gray-600 font-medium">
+            {/* Handle populated author objects or strings */}
+            Author: {post.author?.username || post.author || 'Anonymous'} 
+          </div>
+          <button 
+            onClick={() => console.log(`Reading post: ${post.title}`)} 
+            className="text-indigo-600 hover:text-indigo-800 transition duration-150 text-sm font-semibold"
+          >
+            Read More &rarr;
+          </button>
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 const PostList = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // 3. REMOVED: const API_URL = 'http://localhost:5000/api/posts';
-
   const fetchPosts = async () => {
     setLoading(true);
     setError(null);
     try {
-      // 4. Use the Service instead of raw axios
-      // postService knows the Render URL automatically
       const data = await postService.getAllPosts();
       
-      // 5. Update logic: postService returns the response body directly
       if (data.success && Array.isArray(data.data)) {
         setPosts(data.data);
       } else {
-        throw new Error('Unexpected data format from API.');
+        // Use empty array fallback
+        setPosts([]);
       }
     } catch (err) {
       console.error("Error fetching posts:", err.message);
-      // Update error message to be generic since we are in production
       setError('Failed to fetch posts. Please try again later.');
     } finally {
       setLoading(false);
