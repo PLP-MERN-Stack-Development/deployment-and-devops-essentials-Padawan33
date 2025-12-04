@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import api from '../api.js';
+import api from '../services/api.js';
 
 export default function CategoryManager() {
   const [categories, setCategories] = useState([]);

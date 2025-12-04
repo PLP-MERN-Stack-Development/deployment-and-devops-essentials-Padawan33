@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react'; // 💡 Import useContext
 import { Link, useNavigate } from 'react-router-dom';
-import api from '../api.js';
+import api from '../services/api.js';
 import AuthContext from '../context/AuthContext.jsx'; // 💡 Import the AuthContext
 
 export default function LoginPage() {

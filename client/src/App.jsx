@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Routes, Route, Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'; 
-import api from './api.js'; 
+import api from './services/api.js'; 
 import CreatePost from './pages/CreatePost.jsx'; 
 import RegisterPage from './pages/RegisterPage.jsx';
 import LoginPage from './pages/LoginPage.jsx';
