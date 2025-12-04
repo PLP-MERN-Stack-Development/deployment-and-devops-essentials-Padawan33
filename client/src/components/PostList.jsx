@@ -140,7 +140,7 @@ const PostList = () => {
       <div className="max-w-6xl mx-auto grid gap-8 md:grid-cols-2 lg:grid-cols-3">
         {posts.map(post => (
           <PostCard key={post._id} post={post} /> 
-        ))}
+        }
       </div>
     </div>
   );
