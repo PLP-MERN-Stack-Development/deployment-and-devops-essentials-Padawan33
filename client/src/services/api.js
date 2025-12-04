@@ -1,16 +1,17 @@
 import axios from 'axios';
 
-// 1. Setup the Base Connection to Render
+// 1. DEBUG LOG (Look for this in your browser console!)
+console.log("🚀 API SERVICE LOADED - FORCE VERSION 5.0");
+
+// 2. SETUP: Base URL is ONLY the domain (No /api here)
 const api = axios.create({
-  // Hardcoded Render URL for assignment submission
-  baseURL: 'https://deployment-and-devops-essentials-hcoh.onrender.com/api',
+  baseURL: 'https://deployment-and-devops-essentials-hcoh.onrender.com', 
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-// 2. Add Token to Requests (Interceptor)
-// This automatically adds your login token to every request (needed for creating posts)
+// 3. INTERCEPTOR: Add Token
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
@@ -22,52 +23,42 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// 3. Define the Services
+// 4. SERVICES: Manually add '/api' to every path
 
-// --- Post Service (Handles all blog post actions) ---
 export const postService = {
-  // Get all posts (public)
   getAllPosts: async (page = 1, limit = 10, category = null) => {
-    let url = `/posts?page=${page}&limit=${limit}`;
+    // MANUAL FIX: We type /api/posts explicitly
+    let url = `/api/posts?page=${page}&limit=${limit}`;
     if (category) {
       url += `&category=${category}`;
     }
     const response = await api.get(url);
     return response.data;
   },
-
-  // Create a post (protected)
   createPost: async (postData) => {
-    // Note: If sending a file (image), the header content-type might need to be multipart/form-data
-    // But usually axios handles that if you pass FormData. 
-    // For raw JSON:
-    const response = await api.post('/posts', postData);
+    const response = await api.post('/api/posts', postData);
     return response.data;
   },
-
-  // Get single post
   getPost: async (id) => {
-    const response = await api.get(`/posts/${id}`);
+    const response = await api.get(`/api/posts/${id}`);
     return response.data;
   }
 };
 
-// --- Category Service ---
 export const categoryService = {
   getAllCategories: async () => {
-    const response = await api.get('/categories');
+    const response = await api.get('/api/categories');
     return response.data;
   }
 };
 
-// --- Auth Service ---
 export const authService = {
   register: async (userData) => {
-    const response = await api.post('/auth/register', userData);
+    const response = await api.post('/api/auth/register', userData);
     return response.data;
   },
   login: async (credentials) => {
-    const response = await api.post('/auth/login', credentials);
+    const response = await api.post('/api/auth/login', credentials);
     if (response.data.token) {
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('user', JSON.stringify(response.data.user));
