@@ -5,10 +5,7 @@ const API_URL = 'https://deployment-and-devops-essentials-hcoh.onrender.com/api'
 
 const api = axios.create({
   baseURL: API_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
+  });
 
 // Add Token to requests
 api.interceptors.request.use(
