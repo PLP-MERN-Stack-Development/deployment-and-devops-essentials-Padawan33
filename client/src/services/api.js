@@ -5,15 +5,38 @@ const API_URL = 'https://deployment-and-devops-essentials-hcoh.onrender.com/api'
 
 const api = axios.create({
   baseURL: API_URL,
-  });
+  // Note: No default Content-Type header here. 
+  // This allows the browser to automatically set 'multipart/form-data' for image uploads.
+});
 
-// Add Token to requests
+// 🧠 SMARTER TOKEN INTERCEPTOR
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token');
+    // 1. Try finding the token directly
+    let token = localStorage.getItem('token');
+
+    // 2. If not found, try finding it inside the 'userInfo' object
+    // (This is where your AuthContext likely saves it)
+    if (!token) {
+      const userInfoString = localStorage.getItem('userInfo');
+      if (userInfoString) {
+        try {
+          const userInfo = JSON.parse(userInfoString);
+          // Check if the token exists inside the object
+          if (userInfo && userInfo.token) {
+            token = userInfo.token;
+          }
+        } catch (error) {
+          console.error("Error parsing userInfo for token:", error);
+        }
+      }
+    }
+
+    // 3. Attach the token if we found it
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+    
     return config;
   },
   (error) => Promise.reject(error)
@@ -31,6 +54,7 @@ export const postService = {
     return response.data;
   },
   createPost: async (postData) => {
+    // Axios handles the FormData headers automatically
     const response = await api.post('/posts', postData);
     return response.data;
   },
@@ -55,13 +79,17 @@ export const authService = {
   login: async (credentials) => {
     const response = await api.post('/auth/login', credentials);
     if (response.data.token) {
+      // Save token directly for easy access
       localStorage.setItem('token', response.data.token);
+      // Save full user info for Context
+      localStorage.setItem('userInfo', JSON.stringify(response.data)); 
       localStorage.setItem('user', JSON.stringify(response.data.user));
     }
     return response.data;
   },
   logout: () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('userInfo');
     localStorage.removeItem('user');
   },
   getCurrentUser: () => {
