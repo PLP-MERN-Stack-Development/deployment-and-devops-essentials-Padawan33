@@ -1,11 +1,11 @@
 import axios from 'axios';
 
-// ⚠️ HARDCODED URL FOR ASSIGNMENT SUBMISSION
-// This connects directly to your live Render Backend
-const API_BASE_URL = 'https://deployment-and-devops-essentials-hcoh.onrender.com/api';
-
+// 🚀 CONFIG UPDATE: Pointing directly to your live Render Backend
 const api = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: 'https://deployment-and-devops-essentials-hcoh.onrender.com/api',
+  headers: {
+    'Content-Type': 'application/json',
+  },
 });
 
 export default api;
