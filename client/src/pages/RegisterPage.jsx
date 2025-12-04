@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react'; // 💡 Import useContext
 import { Link, useNavigate } from 'react-router-dom';
-import api from '../api.js';
+import { authService } from '../services/api.js';
 import AuthContext from '../context/AuthContext.jsx'; // 💡 Import the AuthContext
 
 export default function RegisterPage() {
@@ -20,22 +20,23 @@ export default function RegisterPage() {
     setError(null);
 
     try {
-      const response = await api.post('/auth/register', {
+      // OLD: const response = await api.post('/auth/register', { ... });
+      // NEW: Use the service that knows the Render URL
+      const data = await authService.register({
         username,
         email,
         password,
       });
 
-      if (response.data.success) {
-        // 💡 Use the context's login function to log the user in immediately
-        login(response.data);
-        
-        // alert('Registration successful!'); // No alert needed
-        navigate('/'); // Redirect to home page
+      // Note: authService returns response.data directly, so we just check 'data.success'
+      if (data.success) {
+        login(data); // Log the user in
+        navigate('/'); // Redirect to home
       } else {
-        setError(response.data.error || 'Registration failed.');
+        setError(data.error || 'Registration failed.');
       }
     } catch (err) {
+      // Axios errors put the response inside err.response
       setError(err.response?.data?.error || 'An error occurred. Please try again.');
     } finally {
       setIsSubmitting(false);
