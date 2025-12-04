@@ -4,20 +4,22 @@ import { postService } from '../services/api';
 const CATEGORY_PLACEHOLDER = 'Uncategorized'; 
 
 // 1. Define the Backend URL specifically for images
-// We need this because images live on the server, not the frontend
 const API_BASE_URL = 'https://deployment-and-devops-essentials-hcoh.onrender.com';
 
 const PostCard = ({ post }) => {
-  // 2. Construct the full image URL
-  // If the post has an image, combine the Backend URL with the image path
-  const imageUrl = post.image 
-    ? `${API_BASE_URL}${post.image.startsWith('/') ? '' : '/'}${post.image.replace('public/', '')}`
+  // 2. CRITICAL FIX: Use 'featuredImage' (This matches your MongoDB field)
+  // We check 'featuredImage' first, but keep 'image' as a fallback just in case.
+  const imagePath = post.featuredImage || post.image;
+
+  // 3. Construct the full image URL using the fixed path
+  const imageUrl = imagePath 
+    ? `${API_BASE_URL}${imagePath.startsWith('/') ? '' : '/'}${imagePath.replace('public/', '')}`
     : null;
 
   return (
     <div className="bg-white shadow-lg rounded-xl overflow-hidden transform transition duration-300 hover:shadow-xl hover:scale-[1.02]">
       
-      {/* 3. Display the Image (Only if it exists) */}
+      {/* 4. Display the Image (Only if we successfully found a URL) */}
       {imageUrl && (
         <div className="h-48 w-full overflow-hidden bg-gray-200">
           <img 
@@ -25,7 +27,7 @@ const PostCard = ({ post }) => {
             alt={post.title} 
             className="w-full h-full object-cover"
             onError={(e) => { 
-              // If image fails to load, hide the broken icon
+              // If the image fails to load (e.g. file deleted on server), hide the box
               e.target.style.display = 'none'; 
             }} 
           />
@@ -35,7 +37,6 @@ const PostCard = ({ post }) => {
       <div className="p-6">
         <div className="flex items-center justify-between mb-4">
           <span className="bg-indigo-100 text-indigo-800 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">
-            {/* Handle both populated category objects or simple strings */}
             {post.category?.name || post.category || CATEGORY_PLACEHOLDER} 
           </span>
           <span className="text-sm text-gray-500">
@@ -53,7 +54,6 @@ const PostCard = ({ post }) => {
         
         <div className="flex items-center justify-between border-t pt-4">
           <div className="text-sm text-gray-600 font-medium">
-            {/* Handle populated author objects or strings */}
             Author: {post.author?.username || post.author || 'Anonymous'} 
           </div>
           <button 
@@ -82,8 +82,7 @@ const PostList = () => {
       if (data.success && Array.isArray(data.data)) {
         setPosts(data.data);
       } else {
-        // Use empty array fallback
-        setPosts([]);
+        setPosts([]); 
       }
     } catch (err) {
       console.error("Error fetching posts:", err.message);
@@ -133,7 +132,8 @@ const PostList = () => {
   return (
     <div className="p-4 md:p-8 bg-gray-50 min-h-screen font-inter">
       <header className="max-w-4xl mx-auto mb-10 text-center">
-        <h1 className="text-4xl font-extrabold text-gray-900 mb-2">The Starfleet Daily</h1>
+        {/* Updated Title for verification */}
+        <h1 className="text-4xl font-extrabold text-gray-900 mb-2">The Starfleet Daily (LIVE v3)</h1>
         <p className="text-xl text-gray-600">Latest updates from across the quadrant.</p>
       </header>
 
