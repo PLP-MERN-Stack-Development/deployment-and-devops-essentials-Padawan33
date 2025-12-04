@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-// 🚀 FIXED: Hardcoded URL with /api suffix
+// 🚀 FIXED: Hardcoded URL *WITH* /api suffix
 const API_URL = 'https://deployment-and-devops-essentials-hcoh.onrender.com/api';
 
 const api = axios.create({
@@ -10,6 +10,7 @@ const api = axios.create({
   },
 });
 
+// Add Token to requests
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
@@ -20,6 +21,8 @@ api.interceptors.request.use(
   },
   (error) => Promise.reject(error)
 );
+
+// --- SERVICES ---
 
 export const postService = {
   getAllPosts: async (page = 1, limit = 10, category = null) => {
