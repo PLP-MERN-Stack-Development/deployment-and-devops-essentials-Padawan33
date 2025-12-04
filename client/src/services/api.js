@@ -1,17 +1,15 @@
 import axios from 'axios';
 
-// 1. DEBUG LOG (Look for this in your browser console!)
-console.log("🚀 API SERVICE LOADED - FORCE VERSION 5.0");
+// 🚀 FIXED: Hardcoded URL with /api suffix
+const API_URL = 'https://deployment-and-devops-essentials-hcoh.onrender.com/api';
 
-// 2. SETUP: Base URL is ONLY the domain (No /api here)
 const api = axios.create({
-  baseURL: 'https://deployment-and-devops-essentials-hcoh.onrender.com', 
+  baseURL: API_URL,
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-// 3. INTERCEPTOR: Add Token
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
@@ -23,12 +21,9 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// 4. SERVICES: Manually add '/api' to every path
-
 export const postService = {
   getAllPosts: async (page = 1, limit = 10, category = null) => {
-    // MANUAL FIX: We type /api/posts explicitly
-    let url = `/api/posts?page=${page}&limit=${limit}`;
+    let url = `/posts?page=${page}&limit=${limit}`;
     if (category) {
       url += `&category=${category}`;
     }
@@ -36,29 +31,29 @@ export const postService = {
     return response.data;
   },
   createPost: async (postData) => {
-    const response = await api.post('/api/posts', postData);
+    const response = await api.post('/posts', postData);
     return response.data;
   },
   getPost: async (id) => {
-    const response = await api.get(`/api/posts/${id}`);
+    const response = await api.get(`/posts/${id}`);
     return response.data;
   }
 };
 
 export const categoryService = {
   getAllCategories: async () => {
-    const response = await api.get('/api/categories');
+    const response = await api.get('/categories');
     return response.data;
   }
 };
 
 export const authService = {
   register: async (userData) => {
-    const response = await api.post('/api/auth/register', userData);
+    const response = await api.post('/auth/register', userData);
     return response.data;
   },
   login: async (credentials) => {
-    const response = await api.post('/api/auth/login', credentials);
+    const response = await api.post('/auth/login', credentials);
     if (response.data.token) {
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('user', JSON.stringify(response.data.user));
