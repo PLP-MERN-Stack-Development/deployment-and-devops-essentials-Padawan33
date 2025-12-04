@@ -133,7 +133,7 @@ const PostList = () => {
   return (
     <div className="p-4 md:p-8 bg-gray-50 min-h-screen font-inter">
       <header className="max-w-4xl mx-auto mb-10 text-center">
-        <h1 className="text-4xl font-extrabold text-gray-900 mb-2">The Starfleet Daily</h1>
+        <h1 className="text-4xl font-extrabold text-gray-900 mb-2">The Starfleet Daily Live</h1>
         <p className="text-xl text-gray-600">Latest updates from across the quadrant.</p>
       </header>
 
