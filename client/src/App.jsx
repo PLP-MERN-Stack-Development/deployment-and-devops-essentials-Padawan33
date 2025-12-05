@@ -7,6 +7,10 @@ import LoginPage from './pages/LoginPage.jsx';
 import CategoryManager from './pages/CategoryManager.jsx'; 
 import AuthContext from './context/AuthContext.jsx'; 
 import enterpriseSvg from './enterprise.svg'; // Example subtle ship graphic
+
+// 🚀 FIXED: Define Backend URL constant
+const API_BASE_URL = 'https://deployment-and-devops-essentials-hcoh.onrender.com';
+
 // --- UTILITY COMPONENTS ---
 const LoadingSpinner = () => (
   <div style={{ textAlign: 'center', margin: '50px', fontSize: '18px' }}>
@@ -23,13 +27,22 @@ const ErrorMessage = ({ message }) => (
 
 const PostCard = ({ post }) => {
     const defaultExcerpt = post.content ? (post.content.substring(0, 150) + (post.content.length > 150 ? '...' : '')) : 'No content preview available.';
-    const imageUrl = `http://localhost:5000${post.featuredImage}`;
+    
+    // 🚀 FIXED: Use Render URL instead of localhost
+    const imageUrl = post.featuredImage && post.featuredImage !== 'default-post.jpg' 
+        ? `${API_BASE_URL}${post.featuredImage}` 
+        : null;
 
     return (
         <div style={{ border: '1px solid #3b9eff', borderRadius: '8px', margin: '10px', padding: '15px', background: 'rgba(30, 58, 95, 0.6)', backdropFilter: 'blur(5px)' }}>
-            <div style={{ height: '200px', background: '#0a192f', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #3b9eff' }}>
-                {post.featuredImage && post.featuredImage !== 'default-post.jpg' ? (
-                  <img src={imageUrl} alt={post.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            <div style={{ height: '200px', background: '#0a192f', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #3b9eff', overflow: 'hidden' }}>
+                {imageUrl ? (
+                  <img 
+                    src={imageUrl} 
+                    alt={post.title} 
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    onError={(e) => { e.target.style.display = 'none'; }} // Hide if broken
+                  />
                 ) : (
                   <span style={{ color: '#888' }}>[No Image]</span>
                 )}
@@ -38,7 +51,7 @@ const PostCard = ({ post }) => {
                 <span style={{ fontSize: '12px', color: '#f7c800', background: 'rgba(59, 158, 255, 0.2)', padding: '3px 8px', borderRadius: '12px', border: '1px solid #f7c800' }}>
                     {post.category?.name || 'Uncategorized'}
                 </span>
-                <Link to={`/post/${post._id}`}>
+                <Link to={`/post/${post._id}`} style={{ textDecoration: 'none' }}>
                     <h3 style={{ fontSize: '20px', fontWeight: 'bold', margin: '10px 0', color: '#e6f1ff' }}>
                         {post.title}
                     </h3>
@@ -173,7 +186,7 @@ const CommentSection = ({ postId }) => {
   const [newComment, setNewComment] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
+   
   const { userInfo } = useContext(AuthContext); // Get user info
   const navigate = useNavigate();
 
@@ -287,12 +300,12 @@ const HomePage = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
+   
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  
+   
   const [searchParams, setSearchParams] = useSearchParams();
-  
+   
   const pageNumber = Number(searchParams.get('page')) || 1;
   const keyword = searchParams.get('keyword') || '';
   const category = searchParams.get('category') || '';
@@ -341,7 +354,7 @@ const HomePage = () => {
     }
     setSearchParams(params);
   };
-  
+   
   const handleCategoryFilter = (newCategory) => {
     const params = new URLSearchParams(searchParams);
     params.set('page', '1');
@@ -355,7 +368,7 @@ const HomePage = () => {
 
   if (loading) return <LoadingSpinner />;
   if (error) return <ErrorMessage message={error} />;
-  
+   
   return (
     <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
       <h1 style={{ fontSize: '36px', fontWeight: 'bold', marginBottom: '20px', color: '#f7c800' }}>
@@ -425,28 +438,33 @@ const PostDetailPage = () => {
     month: 'long',
     day: 'numeric',
   });
-  const imageUrl = `http://localhost:5000${post.featuredImage}`;
+  
+  // 🚀 FIXED: Use Render URL instead of localhost
+  const imageUrl = post.featuredImage && post.featuredImage !== 'default-post.jpg' 
+    ? `${API_BASE_URL}${post.featuredImage}` 
+    : null;
 
   return (
     <article style={{ maxWidth: '800px', margin: '40px auto', background: 'rgba(10, 25, 47, 0.9)', border: '1px solid #3b9eff', padding: '30px', borderRadius: '8px', boxShadow: '0 0 15px rgba(59, 158, 255, 0.5)' }}>
       <h1 style={{ fontSize: '40px', fontWeight: 'bold', marginBottom: '15px', color: '#f7c800' }}>
         {post.title}
       </h1>
-      
+       
       <div style={{ marginBottom: '20px', fontSize: '14px', color: '#e6f1ff' }}>
         Written by <strong style={{ color: '#f7c800' }}>{post.author?.username || 'Unknown'}</strong>
         <span style={{ margin: '0 10px' }}>|</span>
         Published on {publicationDate}
       </div>
 
-      {post.featuredImage && post.featuredImage !== 'default-post.jpg' && (
+      {imageUrl && (
         <img 
           src={imageUrl} 
           alt={post.title} 
           style={{ width: '100%', height: 'auto', maxHeight: '400px', objectFit: 'cover', borderRadius: '8px', marginBottom: '30px' }} 
+          onError={(e) => { e.target.style.display = 'none'; }}
         />
       )}
-      
+       
       <div style={{ fontSize: '18px', lineHeight: '1.7', color: '#e6f1ff' }}>
         {post.content.split('\n').map((paragraph, index) => (
           <p key={index} style={{ marginBottom: '20px' }}>
@@ -454,7 +472,7 @@ const PostDetailPage = () => {
           </p>
         ))}
       </div>
-      
+       
       {/* 💡 NEW: Add the CommentSection component */}
       <CommentSection postId={post._id} />
 
@@ -477,11 +495,11 @@ const Header = () => {
     <header style={{ background: 'rgba(10, 25, 47, 0.8)', borderBottom: '1px solid #3b9eff', position: 'sticky', top: 0, zIndex: 10, backdropFilter: 'blur(10px)' }}>
       <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '64px' }}>
         <Link to="/" style={{ fontSize: '24px', fontWeight: 'bold', color: '#f7c800', textDecoration: 'none', textShadow: '1px 1px 3px #000' }}>
-          The Starfleet Daily (LIVE2)
+          The Starfleet Daily (LIVE V3)
         </Link>
         <nav style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
           <Link to="/" style={{ color: '#e6f1ff', textDecoration: 'none' }}>Home</Link>
-          
+           
           {userInfo ? (
             <>
               <Link to="/create" style={{ padding: '5px 15px', border: '1px solid #f7c800', color: '#f7c800', borderRadius: '20px', textDecoration: 'none' }}>
