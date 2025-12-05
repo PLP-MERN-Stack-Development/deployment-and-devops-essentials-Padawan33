@@ -495,7 +495,7 @@ const Header = () => {
     <header style={{ background: 'rgba(10, 25, 47, 0.8)', borderBottom: '1px solid #3b9eff', position: 'sticky', top: 0, zIndex: 10, backdropFilter: 'blur(10px)' }}>
       <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '64px' }}>
         <Link to="/" style={{ fontSize: '24px', fontWeight: 'bold', color: '#f7c800', textDecoration: 'none', textShadow: '1px 1px 3px #000' }}>
-          The Starfleet Daily (LIVE V3)
+          The Starfleet Daily.
         </Link>
         <nav style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
           <Link to="/" style={{ color: '#e6f1ff', textDecoration: 'none' }}>Home</Link>
