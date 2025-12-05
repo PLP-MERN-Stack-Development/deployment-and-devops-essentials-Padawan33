@@ -1,0 +1,32 @@
+name: Backend CI
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'server/**' # Only runs when server files change
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./server
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: server/package-lock.json
+
+    - name: Install Dependencies
+      run: npm install
+
+    - name: Verify Install
+      run: echo "Backend dependencies installed successfully"

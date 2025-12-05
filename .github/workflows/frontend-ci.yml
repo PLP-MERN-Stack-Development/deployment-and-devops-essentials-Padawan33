@@ -1,0 +1,33 @@
+name: Frontend CI
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'client/**' # Only runs when client files change
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./client
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: client/package-lock.json
+
+    - name: Install Dependencies
+      run: npm install
+
+    - name: Run Build
+      run: npm run build
+      # If this fails, it means there is a syntax error in your React code!
