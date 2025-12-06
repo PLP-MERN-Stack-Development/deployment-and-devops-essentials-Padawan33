@@ -43,6 +43,16 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // It must come BEFORE the JSON routes that use the same base path
 app.use('/api/posts', postRoutes); 
 
+// 🩺 Health Check Endpoint (Task 5: Monitoring)
+// Automated services ping this to check if the server is alive
+app.get('/health', (req, res) => {
+    res.status(200).json({ 
+        status: 'UP', 
+        timestamp: new Date(), 
+        uptime: process.uptime() 
+    });
+});
+
 // These routes DO need to parse JSON
 app.use('/api/categories', express.json(), categoryRoutes);
 app.use('/api/auth', express.json(), authRoutes);

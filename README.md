@@ -1,77 +1,103 @@
-# Deployment and DevOps for MERN Applications
+# 🚀 MERN Stack Blog Application - Deployment & DevOps
 
-This assignment focuses on deploying a full MERN stack application to production, implementing CI/CD pipelines, and setting up monitoring for your application.
+A full-stack blogging application built with the MERN stack (MongoDB, Express, React, Node.js), featuring authentication, image uploads, commenting, and category management.
 
-## Assignment Overview
+This repository demonstrates **Deployment and DevOps best practices**, including CI/CD pipelines, production optimization, and cloud hosting.
 
-You will:
-1. Prepare your MERN application for production deployment
-2. Deploy the backend to a cloud platform
-3. Deploy the frontend to a static hosting service
-4. Set up CI/CD pipelines with GitHub Actions
-5. Implement monitoring and maintenance strategies
+## 🌐 Live Demo
 
-## Getting Started
+* **Frontend (Live Blog):** [https://deployment-and-devops-essentials-zkpc.onrender.com](https://deployment-and-devops-essentials-zkpc.onrender.com)
+* **Backend (API):** [https://deployment-and-devops-essentials-hcoh.onrender.com](https://deployment-and-devops-essentials-hcoh.onrender.com)
+* **Health Check:** [https://deployment-and-devops-essentials-hcoh.onrender.com/health](https://deployment-and-devops-essentials-hcoh.onrender.com/health)
 
-1. Accept the GitHub Classroom assignment invitation
-2. Clone your personal repository that was created by GitHub Classroom
-3. Follow the setup instructions in the `Week7-Assignment.md` file
-4. Use the provided templates and configuration files as a starting point
+---
 
-## Files Included
+## 📸 Screenshots
 
-- `Week7-Assignment.md`: Detailed assignment instructions
-- `.github/workflows/`: GitHub Actions workflow templates
-- `deployment/`: Deployment configuration files and scripts
-- `.env.example`: Example environment variable templates
-- `monitoring/`: Monitoring configuration examples
+### 1. CI/CD Pipeline Success
+![CI/CD Pipeline Action](PLACEHOLDER_LINK_HERE)
 
-## Requirements
+### 2. Live Application (Home Page)
+![Home Page](PLACEHOLDER_LINK_HERE)
 
-- A completed MERN stack application from previous weeks
-- Accounts on the following services:
-  - GitHub
-  - MongoDB Atlas
-  - Render, Railway, or Heroku (for backend)
-  - Vercel, Netlify, or GitHub Pages (for frontend)
-- Basic understanding of CI/CD concepts
+### 3. Post Creation & Image Upload
+![Create Post](PLACEHOLDER_LINK_HERE)
 
-## Deployment Platforms
+---
 
-### Backend Deployment Options
-- **Render**: Easy to use, free tier available
-- **Railway**: Developer-friendly, generous free tier
-- **Heroku**: Well-established, extensive documentation
+## 🛠️ Tech Stack
 
-### Frontend Deployment Options
-- **Vercel**: Optimized for React apps, easy integration
-- **Netlify**: Great for static sites, good CI/CD
-- **GitHub Pages**: Free, integrated with GitHub
+* **Frontend:** React (Vite), React Router v6, CSS Modules.
+* **Backend:** Node.js, Express.js.
+* **Database:** MongoDB Atlas (Production Cluster).
+* **DevOps:** * **Hosting:** Render (Static Site + Web Service).
+    * **CI/CD:** GitHub Actions (Automated testing & build checks).
+    * **Monitoring:** Uptime health checks.
 
-## CI/CD Pipeline
+---
 
-The assignment includes templates for setting up GitHub Actions workflows:
-- `frontend-ci.yml`: Tests and builds the React application
-- `backend-ci.yml`: Tests the Express.js backend
-- `frontend-cd.yml`: Deploys the frontend to your chosen platform
-- `backend-cd.yml`: Deploys the backend to your chosen platform
+## ⚙️ Features Implemented
 
-## Submission
+1.  **Production-Ready API:**
+    * Security headers (`helmet`).
+    * Request logging (`morgan`).
+    * CORS configuration for specific frontend domains.
+2.  **Authentication:**
+    * JWT-based auth with secure password hashing (`bcryptjs`).
+3.  **File Handling:**
+    * Image uploads handled via `formidable`.
+    * *(Note: On free Render tier, images are ephemeral and reset on deploy).*
+4.  **DevOps & Automation:**
+    * **Frontend CI:** Automatically builds React on push to verify syntax.
+    * **Backend CI:** Verifies dependency installation on push.
+    * **Health Check Endpoint:** `/health` route for uptime monitoring.
 
-Your work will be automatically submitted when you push to your GitHub Classroom repository. Make sure to:
+---
 
-1. Complete all deployment tasks
-2. Set up CI/CD pipelines with GitHub Actions
-3. Deploy both frontend and backend to production
-4. Document your deployment process in the README.md
-5. Include screenshots of your CI/CD pipeline in action
-6. Add URLs to your deployed applications
+## 🚀 Setup & Installation
 
-## Resources
+To run this project locally:
 
-- [GitHub Actions Documentation](https://docs.github.com/en/actions)
-- [MongoDB Atlas Documentation](https://docs.atlas.mongodb.com/)
-- [Render Documentation](https://render.com/docs)
-- [Railway Documentation](https://docs.railway.app/)
-- [Vercel Documentation](https://vercel.com/docs)
-- [Netlify Documentation](https://docs.netlify.com/) 
+1.  **Clone the repo:**
+    ```bash
+    git clone [https://github.com/PLP-MERN-Stack-Development/deployment-and-devops-essentials-Padawan33.git](https://github.com/PLP-MERN-Stack-Development/deployment-and-devops-essentials-Padawan33.git)
+    cd deployment-and-devops-essentials-Padawan33
+    ```
+
+2.  **Install Dependencies:**
+    ```bash
+    # Install server deps
+    cd server && npm install
+    # Install client deps
+    cd ../client && npm install
+    ```
+
+3.  **Environment Variables:**
+    Create a `.env` file in the `server` folder:
+    ```env
+    PORT=5000
+    MONGO_URI=your_mongodb_connection_string
+    JWT_SECRET=your_secret_key
+    NODE_ENV=development
+    ```
+
+4.  **Run Locally:**
+    ```bash
+    # Run Backend
+    cd server && npm start
+    # Run Frontend (in new terminal)
+    cd client && npm run dev
+    ```
+
+---
+
+## 📝 Deployment Process
+
+1.  **Backend:** Deployed to **Render Web Service**.
+    * Environment variables configured in Render Dashboard.
+    * Build Command: `npm install`.
+    * Start Command: `npm start`.
+2.  **Frontend:** Deployed to **Render Static Site**.
+    * Build Command: `npm install && npm run build`.
+    * Publish Directory: `dist`.
+    * Rewrites configured for SPA routing (`/*` -> `/index.html`).
